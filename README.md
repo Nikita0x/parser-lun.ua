@@ -5,6 +5,7 @@
 <summary>Пример объекта</summary>
 
 <details>
+
 ```json
 {
 	"price": "6 500 грн",
@@ -32,6 +33,7 @@
 	"url": "https://lun.ua/realty/1489799563"
 }
 ```
+
 </details>
 
 ## Tech
