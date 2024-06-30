@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"target": "ES2022", // Change this to es2015 or higher
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"removeComments": true
+	},
+	// "include": ["utils/**/*.ts"],
+	"exclude": ["node_modules"]
+}
