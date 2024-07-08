@@ -4,7 +4,7 @@ const currency = Currency.UAH;
 const order = Order.ASCENDING;
 export const viewport = { width: 1024, height: 1024 };
 export const browserLaunchOptions = {
-    headless: false,
+    headless: true,
     slowMo: 8,
 };
 export const PAGE_PARAMS = {

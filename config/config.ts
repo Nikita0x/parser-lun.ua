@@ -9,7 +9,7 @@ const order: Order = Order.ASCENDING;
 export const viewport = { width: 1024, height: 1024 };
 // параметры запуска
 export const browserLaunchOptions = {
-	headless: false, //false - будет открывать браузер
+	headless: true, //false - будет открывать браузер
 	slowMo: 8, //замедление
 	// devtools: true,
 };

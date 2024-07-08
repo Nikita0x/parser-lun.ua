@@ -17,6 +17,63 @@ import { assert, createJSONfile, grabAllTextContents, grabTextContent, randomNam
             await newPage.bringToFront();
             await newPage.setViewport(viewport);
             const details = await grabAllTextContents(newPage, LUN_SELECTORS_INNER.details);
+            const organizedDetails = {
+                rooms: "no data",
+                area: "no data",
+                floor: "no data",
+                type: "no data",
+                heating: "no data",
+                builtYear: "no data",
+                material: "no data",
+                foundDate: "no data",
+                updatedDate: "no data",
+                ceilingHeight: "no data",
+            };
+            if (Array.isArray(details)) {
+                details.forEach((item) => {
+                    assert(item);
+                    const roomsPattern = new RegExp("кімнат|комнат");
+                    if (roomsPattern.test(item)) {
+                        organizedDetails.rooms = item;
+                    }
+                    const areaPattern = new RegExp("м²");
+                    if (areaPattern.test(item)) {
+                        organizedDetails.area = item;
+                    }
+                    const floorPattern = new RegExp("этаж|поверх");
+                    if (floorPattern.test(item)) {
+                        organizedDetails.floor = item;
+                    }
+                    const typePattern = new RegExp("аппс|аппс-люкс|бпс|чеський проєкт|гостинка|хрущівка|дореволюційний|совмін|серія|спец. проєкт|сталінка|аппс|аппс-люкс|бпс|чешский проект|гостинка|хрущевка|дореволюционный|совмин|серия|спец. проект|сталинка");
+                    if (typePattern.test(item)) {
+                        organizedDetails.type = item;
+                    }
+                    const materialPattern = new RegExp("блочні|монолітно-каркасний|панельні|утеплена панель|цегляний будинок|блочные|монолитно-каркасные|панельные|утепленная панель|кирпичные");
+                    if (materialPattern.test(item)) {
+                        organizedDetails.material = item;
+                    }
+                    const builtYearPattern = new RegExp(/(\d{4})\s+(Рік будівництва|год постройки)/i);
+                    if (builtYearPattern.test(item)) {
+                        const onlyYearPattern = /\b\d{4}\b/;
+                        const match = item.match(onlyYearPattern);
+                        if (match) {
+                            organizedDetails.builtYear = match[0];
+                        }
+                    }
+                    const ceilingHeightPattern = new RegExp(/высота потолка|висота стелі/i);
+                    if (ceilingHeightPattern.test(item)) {
+                        organizedDetails.ceilingHeight = item;
+                    }
+                    const heatingPattern = /(отопление|опалення)/i;
+                    if (heatingPattern.test(item)) {
+                        organizedDetails.heating = item;
+                    }
+                });
+                console.log(organizedDetails);
+            }
+            else {
+                console.log("No data available");
+            }
             const price = await grabTextContent(newPage, LUN_SELECTORS_INNER.price);
             const address = await grabTextContent(newPage, LUN_SELECTORS_INNER.address);
             const description = await grabTextContent(newPage, LUN_SELECTORS_INNER.description);
@@ -25,7 +82,7 @@ import { assert, createJSONfile, grabAllTextContents, grabTextContent, randomNam
             const url = newPage.url();
             const apartment = {
                 price: price,
-                details: details,
+                details: organizedDetails,
                 description: description,
                 address: address,
                 photos: photos,
@@ -33,7 +90,6 @@ import { assert, createJSONfile, grabAllTextContents, grabTextContent, randomNam
                 url: url,
             };
             finalListings.push(apartment);
-            console.log(apartment);
             await newPage.close();
         }
     });
