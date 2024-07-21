@@ -11,6 +11,7 @@ import {
 	collectPhotos,
 } from "./modules/lun/collect.js";
 import { LUN_SELECTORS_INNER } from "./modules/lun/enums.js";
+import { pagesToParse } from "./config/config.js";
 import {
 	assert,
 	createJSONfile,
@@ -167,7 +168,7 @@ import {
 		}
 	});
 
-	while (currentPage <= 1) {
+	while (currentPage <= pagesToParse) {
 		const urlParams = new URLSearchParams(PAGE_PARAMS);
 		urlParams.set("page", currentPage.toString());
 		const pageUrl = `${LUN_BASE_URL}?${urlParams.toString()}`;

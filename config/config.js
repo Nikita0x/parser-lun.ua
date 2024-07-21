@@ -4,9 +4,10 @@ const currency = Currency.UAH;
 const order = Order.ASCENDING;
 export const viewport = { width: 1024, height: 1024 };
 export const browserLaunchOptions = {
-    headless: true,
+    headless: false,
     slowMo: 8,
 };
+export const pagesToParse = 20;
 export const PAGE_PARAMS = {
     currency,
     geo_id: "10009580",

@@ -9,10 +9,12 @@ const order: Order = Order.ASCENDING;
 export const viewport = { width: 1024, height: 1024 };
 // параметры запуска
 export const browserLaunchOptions = {
-	headless: true, //false - будет открывать браузер
+	headless: false, //false - будет открывать браузер
 	slowMo: 8, //замедление
 	// devtools: true,
 };
+// кол-во страниц которые будем парсить
+export const pagesToParse = 2;
 
 export const PAGE_PARAMS = {
 	currency,

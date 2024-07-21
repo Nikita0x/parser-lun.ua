@@ -2,7 +2,14 @@ import puppeteer from "puppeteer";
 import { LUN_BASE_URL, PAGE_PARAMS, browserLaunchOptions, viewport, } from "./config/config.js";
 import { clickOnListings, collectPhoneNumber, collectPhotos, } from "./modules/lun/collect.js";
 import { LUN_SELECTORS_INNER } from "./modules/lun/enums.js";
+import { pagesToParse } from "./config/config.js";
 import { assert, createJSONfile, grabAllTextContents, grabTextContent, randomName, } from "./utils/common.js";
+import { Cluster } from "puppeteer-cluster";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 (async () => {
     console.time("time for execution");
     let currentPage = 1;
@@ -10,6 +17,14 @@ import { assert, createJSONfile, grabAllTextContents, grabTextContent, randomNam
     const browser = await puppeteer.launch(browserLaunchOptions);
     const page = await browser.newPage();
     await page.setViewport(viewport);
+    const cluster = await Cluster.launch({
+        concurrency: Cluster.CONCURRENCY_CONTEXT,
+        maxConcurrency: 20,
+    });
+    const screenshotsDir = path.resolve(__dirname, "screenshots");
+    if (!fs.existsSync(screenshotsDir)) {
+        fs.mkdirSync(screenshotsDir);
+    }
     browser.on("targetcreated", async (target) => {
         if (target.type() === "page") {
             const newPage = await target.page();
@@ -93,16 +108,31 @@ import { assert, createJSONfile, grabAllTextContents, grabTextContent, randomNam
             await newPage.close();
         }
     });
-    while (currentPage <= 1) {
+    await cluster.task(async ({ page, data: url }) => {
+        try {
+            await page.goto(url, { waitUntil: "networkidle2" });
+            const screenshotName = url.replace(/[^a-zA-Z0-9]/g, "_") + ".jpg";
+            const screenshotPath = path.join(screenshotsDir, screenshotName);
+            await page.screenshot({ path: screenshotPath });
+            console.log(`Screenshot taken for ${url} and saved to ${screenshotPath}`);
+        }
+        catch (error) {
+            console.error(`Failed to take screenshot of ${url}:`, error);
+        }
+    });
+    while (currentPage <= pagesToParse) {
         const urlParams = new URLSearchParams(PAGE_PARAMS);
         urlParams.set("page", currentPage.toString());
         const pageUrl = `${LUN_BASE_URL}?${urlParams.toString()}`;
         await page.goto(pageUrl);
         console.log("Current page: ", currentPage);
+        cluster.queue(`https://lun.ua/search?currency=UAH&geo_id=10009580&has_eoselia=false&is_without_fee=false&price_sqm_currency=UAH&section_id=2&sort=price-asc&page=${currentPage}`);
         await clickOnListings(page);
         currentPage++;
     }
     createJSONfile(finalListings, `new-json-${randomName(5)}`);
+    await cluster.idle();
+    await cluster.close();
     console.timeEnd("time for execution");
     console.log("Done!");
     await browser.close();
