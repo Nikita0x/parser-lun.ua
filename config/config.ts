@@ -10,11 +10,11 @@ export const viewport = { width: 1024, height: 1024 };
 // параметры запуска
 export const browserLaunchOptions = {
 	headless: false, //false - будет открывать браузер
-	slowMo: 8, //замедление
+	// slowMo: 50,
 	// devtools: true,
 };
 // кол-во страниц которые будем парсить
-export const pagesToParse = 2;
+export const pagesToParse = 1;
 
 export const PAGE_PARAMS = {
 	currency,

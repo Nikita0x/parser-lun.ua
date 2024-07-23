@@ -79,7 +79,17 @@ export async function collectDescriptions(page: puppeteer.Page) {
 export async function collectPhotos(page: puppeteer.Page) {
 	const imageLinks: string[] = [];
 
-	await page.locator(LUN_SELECTORS_INNER.showAllPhotosButton).click();
+	// Check if the "Show All Photos" button is present
+	const showAllPhotosButton = await page.$(
+		LUN_SELECTORS_INNER.showAllPhotosButton,
+	);
+	if (showAllPhotosButton) {
+		await showAllPhotosButton.click();
+		console.log("Show all photos button - PRESENT");
+	} else {
+		console.log("Show all photos button - NOT FOUND");
+		return imageLinks;
+	}
 	await page.locator(LUN_SELECTORS_INNER.fullscreenPhotosModal).scroll({
 		scrollTop: 10000,
 	});

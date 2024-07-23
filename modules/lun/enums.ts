@@ -14,7 +14,7 @@ export enum LUN_SELECTORS_INNER {
 	showAllPhotosButton = ".NativeGallery_showFullscreenAction__dudGo",
 	fullscreenPhotosModal = ".FullscreenModal_root__ateOB",
 	divsWithPhotos = ".JustifiedGallery_item__cZ1qB",
-	details = ".RealtyProperties_text__gF_4F",
+	details = ".RealtyPropertiesItem_text__SR8u_",
 	furniture = ".RealtyFurniture_text__vpPYw",
 	name = ".ContactsDetails_title__XD4Yy",
 	title = ".TypographyRefresh-module_root__xud2x TypographyRefresh-module_button__7-ks7 ContactsDetails_position__UnuDc", //inner - not working
